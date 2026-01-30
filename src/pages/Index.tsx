@@ -46,20 +46,20 @@ export default function Index() {
 
   const onboardingSteps = [
     {
-      title: 'Добро пожаловать! 🚀',
-      description: 'Твоя цель — создать успешный стартап за 30 лет игрового времени.',
+      title: 'Добро пожаловать в Кремниевую долину! 🚀',
+      description: 'Почувствуй себя Гэвином Бэлсоном или Ричардом Хендриксом. Твоя цель — создать успешный стартап за 30 лет.',
     },
     {
       title: 'Баланс и уровни 💰',
-      description: 'У тебя есть $1000 стартового капитала. Развивай компанию, зарабатывай деньги и повышай уровень.',
+      description: 'У тебя есть $1000 стартового капитала. Не как у Эрлиха с его инкубатором, но это начало!',
     },
     {
       title: 'Создавай MVP 💡',
-      description: 'Создавай минимально жизнеспособные продукты, улучшай их и получай прибыль.',
+      description: 'Создавай минимально жизнеспособные продукты. Помни: "This guy fucks!" — говорил Расс Ханнеман.',
     },
     {
       title: 'Проводи исследования 🔬',
-      description: 'Вкладывай средства в маркетинг, разработку и дизайн для увеличения доходов.',
+      description: 'Вкладывай в маркетинг, разработку и дизайн. Даже Hooli начинала с малого.',
     },
   ];
 
@@ -120,6 +120,19 @@ export default function Index() {
     }
   }, [gameState.xp, gameState.xpToNextLevel]);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (totalRevenue > 0) {
+        setGameState(prev => ({
+          ...prev,
+          balance: prev.balance + Math.floor(totalRevenue / 12),
+        }));
+      }
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [totalRevenue]);
+
   if (currentScreen === 'onboarding') {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -178,6 +191,7 @@ export default function Index() {
                 <Icon name="PackageOpen" size={48} className="mx-auto mb-2 opacity-50" />
                 <p>У тебя пока нет продуктов</p>
                 <p className="text-sm">Создай свой первый MVP!</p>
+                <p className="text-xs mt-2 italic">"Мы делаем мир лучше" — Гэвин Бэлсон</p>
               </Card>
             ) : (
               <div className="space-y-3">
@@ -279,6 +293,7 @@ export default function Index() {
               <div className="space-y-2">
                 <p className="text-sm text-muted-foreground">Стоимость: $200</p>
                 <p className="text-sm text-muted-foreground">Доход: $50-100/час</p>
+                <p className="text-xs italic text-muted-foreground mt-2">"Добро пожаловать в будущее" — Джаред Дуанн</p>
               </div>
               <Button 
                 onClick={handleCreateMVP}
@@ -298,6 +313,7 @@ export default function Index() {
             <Card className="p-6 text-center text-muted-foreground">
               <Icon name="ShoppingBag" size={48} className="mx-auto mb-2 opacity-50" />
               <p>Скоро здесь появятся улучшения</p>
+              <p className="text-xs mt-2 italic">"Tres Comas — текила миллиардеров" — Расс Ханнеман</p>
             </Card>
           </div>
         )}
