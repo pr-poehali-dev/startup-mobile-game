@@ -98,6 +98,30 @@ export default function Index() {
     }
   };
 
+  const handleScaleMVP = () => {
+    if (gameState.balance >= 500 && gameState.products.length > 0) {
+      const randomProduct = gameState.products[Math.floor(Math.random() * gameState.products.length)];
+      const scaledProduct = {
+        id: `scaled-${Date.now()}`,
+        name: `${randomProduct.name} (Scaled)`,
+        revenue: randomProduct.revenue * 2,
+        level: randomProduct.level + 1,
+      };
+      
+      setGameState(prev => ({
+        ...prev,
+        balance: prev.balance - 500,
+        products: [...prev.products, scaledProduct],
+        research: {
+          marketing: prev.research.marketing + 1,
+          development: prev.research.development + 1,
+          design: prev.research.design + 1,
+        },
+        xp: prev.xp + 50,
+      }));
+    }
+  };
+
   const handleResearch = (type: keyof GameState['research'], cost: number) => {
     if (gameState.balance >= cost) {
       setGameState(prev => ({
@@ -340,6 +364,37 @@ export default function Index() {
                 Создать MVP за $200
               </Button>
             </Card>
+
+            {gameState.level >= 5 && (
+              <Card className="p-6 space-y-4 text-center border-2 border-primary">
+                <div className="flex items-center justify-center gap-2">
+                  <Icon name="Rocket" size={64} className="text-primary" />
+                  <Icon name="TrendingUp" size={32} className="text-primary" />
+                </div>
+                <div className="flex items-center justify-center gap-2">
+                  <h3 className="text-lg font-semibold">Масштабирование MVP</h3>
+                  <span className="px-2 py-1 bg-primary text-primary-foreground text-xs rounded-full">Новое!</span>
+                </div>
+                <p className="text-muted-foreground">
+                  Масштабируй существующий продукт: удвой доход и получи бонус к исследованиям
+                </p>
+                <div className="space-y-2">
+                  <p className="text-sm text-muted-foreground">Стоимость: $500</p>
+                  <p className="text-sm text-muted-foreground">Бонус: +1 к каждому исследованию</p>
+                  <p className="text-sm text-muted-foreground">Эффект: Доход ×2</p>
+                  <p className="text-xs italic text-muted-foreground mt-2">"Мы масштабируем быстро, агрессивно!" — Гэвин Бэлсон</p>
+                </div>
+                <Button 
+                  onClick={handleScaleMVP}
+                  disabled={gameState.balance < 500 || gameState.products.length === 0}
+                  className="w-full"
+                  size="lg"
+                  variant="default"
+                >
+                  Масштабировать за $500
+                </Button>
+              </Card>
+            )}
           </div>
         )}
 
