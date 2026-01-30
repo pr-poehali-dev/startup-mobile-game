@@ -21,6 +21,9 @@ interface GameState {
     revenue: number;
     level: number;
   }>;
+  achievements: {
+    billionaireWay: boolean;
+  };
 }
 
 type Screen = 'onboarding' | 'home' | 'research' | 'mvp' | 'shop' | 'stats';
@@ -42,7 +45,12 @@ export default function Index() {
       design: 0,
     },
     products: [],
+    achievements: {
+      billionaireWay: false,
+    },
   });
+
+  const [showAchievement, setShowAchievement] = useState(false);
 
   const onboardingSteps = [
     {
@@ -133,6 +141,20 @@ export default function Index() {
     return () => clearInterval(interval);
   }, [totalRevenue]);
 
+  useEffect(() => {
+    if (totalRevenue >= 1000 && !gameState.achievements.billionaireWay) {
+      setGameState(prev => ({
+        ...prev,
+        achievements: {
+          ...prev.achievements,
+          billionaireWay: true,
+        },
+      }));
+      setShowAchievement(true);
+      setTimeout(() => setShowAchievement(false), 5000);
+    }
+  }, [totalRevenue, gameState.achievements.billionaireWay]);
+
   if (currentScreen === 'onboarding') {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -161,6 +183,20 @@ export default function Index() {
 
   return (
     <div className="min-h-screen bg-background pb-32">
+      {showAchievement && (
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 animate-fade-in">
+          <Card className="p-4 shadow-lg border-2 border-primary">
+            <div className="flex items-center gap-3">
+              <Icon name="Trophy" size={32} className="text-primary" />
+              <div>
+                <h3 className="font-bold text-lg">Достижение разблокировано!</h3>
+                <p className="text-sm text-muted-foreground">Путь миллиардера</p>
+              </div>
+            </div>
+          </Card>
+        </div>
+      )}
+      
       <div className="max-w-md mx-auto p-4 space-y-4">
         <Card className="p-6 space-y-4">
           <div className="flex items-center justify-between">
@@ -351,6 +387,35 @@ export default function Index() {
                 <span className="text-muted-foreground">Дизайн</span>
                 <span className="font-semibold">Ур. {gameState.research.design}</span>
               </div>
+            </Card>
+
+            <Card className="p-5 space-y-3">
+              <h3 className="font-semibold">Достижения</h3>
+              {gameState.achievements.billionaireWay ? (
+                <div className="flex items-center gap-3 p-3 bg-primary/10 rounded-lg">
+                  <img 
+                    src="https://cdn.poehali.dev/projects/4d317872-35f1-46d7-93e4-a02a7575ebb1/bucket/df687516-6862-4ed4-b339-978c1e45c859.png" 
+                    alt="Tres Comas" 
+                    className="w-16 h-16 object-contain"
+                  />
+                  <div className="flex-1">
+                    <h4 className="font-semibold text-primary">Путь миллиардера</h4>
+                    <p className="text-sm text-muted-foreground">Достигни $1000/час дохода</p>
+                    <p className="text-xs italic mt-1">"Tres Comas — текила миллиардеров"</p>
+                  </div>
+                  <Icon name="Trophy" size={24} className="text-primary" />
+                </div>
+              ) : (
+                <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg opacity-50">
+                  <div className="w-16 h-16 bg-muted rounded-lg flex items-center justify-center">
+                    <Icon name="Lock" size={24} className="text-muted-foreground" />
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="font-semibold">Путь миллиардера</h4>
+                    <p className="text-sm text-muted-foreground">Достигни $1000/час дохода</p>
+                  </div>
+                </div>
+              )}
             </Card>
           </div>
         )}
